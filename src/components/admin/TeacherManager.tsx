@@ -124,8 +124,8 @@ export default function TeacherManager() {
         </div>
       </div>
       {/* Add/Edit Form */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">{editingTeacher ? 'Edit Teacher' : 'Add New Teacher'}</h2>
+      <div className="p-6 rounded-lg shadow-md" style={{backgroundColor: 'white', border: '1px solid #E8DCC6'}}>
+        <h2 className="text-2xl font-semibold mb-4" style={{color: '#212842'}}>{editingTeacher ? 'Edit Teacher' : 'Add New Teacher'}</h2>
         {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
         {editingTeacher ? (
           <form onSubmit={handleUpdateTeacher} className="space-y-4">
@@ -134,36 +134,92 @@ export default function TeacherManager() {
               value={editingTeacher.displayName}
               onChange={(e) => setEditingTeacher({ ...editingTeacher, displayName: e.target.value })}
               placeholder="Full Name"
-              className="w-full px-4 py-2 border rounded-md text-black"
+              className="w-full px-4 py-2 border rounded-md"
+              style={{
+                borderColor: '#E8DCC6',
+                backgroundColor: 'white',
+                color: '#212842'
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#212842';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = '#E8DCC6';
+              }}
               required
             />
             <div className="flex gap-4">
-              <button type="submit" className="px-6 py-2 bg-indigo-600 text-white rounded-md">Update</button>
-              <button type="button" onClick={() => setEditingTeacher(null)} className="px-6 py-2 bg-gray-500 text-white rounded-md">Cancel</button>
+              <button type="submit" className="px-6 py-2 rounded-md transition-colors" style={{backgroundColor: '#212842', color: '#F0E7D5'}}>Update</button>
+              <button type="button" onClick={() => setEditingTeacher(null)} className="px-6 py-2 rounded-md transition-colors" style={{backgroundColor: '#2D3548', color: '#F0E7D5'}}>Cancel</button>
             </div>
           </form>
         ) : (
           <form onSubmit={handleAddTeacher} className="space-y-4">
-            <input type="text" value={newTeacher.displayName} onChange={(e) => setNewTeacher({ ...newTeacher, displayName: e.target.value })} placeholder="Full Name" className="w-full px-4 py-2 border rounded-md text-black" required />
-            <input type="email" value={newTeacher.email} onChange={(e) => setNewTeacher({ ...newTeacher, email: e.target.value })} placeholder="Email Address" className="w-full px-4 py-2 border rounded-md text-black" required />
-            <input type="password" value={newTeacher.password} onChange={(e) => setNewTeacher({ ...newTeacher, password: e.target.value })} placeholder="Password" className="w-full px-4 py-2 border rounded-md text-black" required />
-            <button type="submit" className="px-6 py-2 bg-indigo-600 text-white rounded-md">Add Teacher</button>
+            <input 
+              type="text" 
+              value={newTeacher.displayName} 
+              onChange={(e) => setNewTeacher({ ...newTeacher, displayName: e.target.value })} 
+              placeholder="Full Name" 
+              className="w-full px-4 py-2 border rounded-md" 
+              style={{
+                borderColor: '#E8DCC6',
+                backgroundColor: 'white',
+                color: '#212842'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#212842'}
+              onBlur={(e) => e.target.style.borderColor = '#E8DCC6'}
+              required 
+            />
+            <input 
+              type="email" 
+              value={newTeacher.email} 
+              onChange={(e) => setNewTeacher({ ...newTeacher, email: e.target.value })} 
+              placeholder="Email Address" 
+              className="w-full px-4 py-2 border rounded-md" 
+              style={{
+                borderColor: '#E8DCC6',
+                backgroundColor: 'white',
+                color: '#212842'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#212842'}
+              onBlur={(e) => e.target.style.borderColor = '#E8DCC6'}
+              required 
+            />
+            <input 
+              type="password" 
+              value={newTeacher.password} 
+              onChange={(e) => setNewTeacher({ ...newTeacher, password: e.target.value })} 
+              placeholder="Password" 
+              className="w-full px-4 py-2 border rounded-md" 
+              style={{
+                borderColor: '#E8DCC6',
+                backgroundColor: 'white',
+                color: '#212842'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#212842'}
+              onBlur={(e) => e.target.style.borderColor = '#E8DCC6'}
+              required 
+            />
+            <button type="submit" className="px-6 py-2 rounded-md transition-colors" style={{backgroundColor: '#212842', color: '#F0E7D5'}}>Add Teacher</button>
           </form>
         )}
       </div>
 
       {/* Teachers List */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">Existing Teachers</h2>
+      <div className="p-6 rounded-lg shadow-md" style={{backgroundColor: 'white', border: '1px solid #E8DCC6'}}>
+        <h2 className="text-2xl font-semibold mb-4" style={{color: '#212842'}}>Existing Teachers</h2>
         <ul className="space-y-4">
           {teachers.map(teacher => (
-            <li key={teacher.uid} className="flex items-center justify-between p-4 bg-gray-50 rounded-md">
+            <li key={teacher.uid} className="flex items-center justify-between p-4 rounded-md" style={{backgroundColor: '#F0E7D5'}}>
               <div className="flex-1">
-                <p className="text-gray-800 font-medium">{teacher.displayName}</p>
-                <p className="text-gray-500 text-sm">{teacher.email}</p>
+                <p className="font-medium" style={{color: '#212842'}}>{teacher.displayName}</p>
+                <p className="text-sm" style={{color: '#2D3548'}}>{teacher.email}</p>
                 <div className="flex items-center mt-2">
-                  <span className="text-gray-600 text-sm mr-2">Password:</span>
-                  <span className="text-gray-800 text-sm font-mono bg-gray-200 px-2 py-1 rounded mr-2">
+                  <span className="text-sm mr-2" style={{color: '#2D3548'}}>Password:</span>
+                  <span className="text-sm font-mono px-2 py-1 rounded mr-2" style={{
+                    backgroundColor: '#E8DCC6',
+                    color: '#212842'
+                  }}>
                     {showPasswords[teacher.uid] 
                       ? (teacher.password || 'Not available')
                       : '••••••••'
@@ -171,14 +227,20 @@ export default function TeacherManager() {
                   </span>
                   <button
                     onClick={() => togglePasswordVisibility(teacher.uid)}
-                    className="text-indigo-600 hover:text-indigo-800 text-sm mr-2"
+                    className="text-sm mr-2 transition-colors"
+                    style={{color: '#212842'}}
+                    onMouseEnter={(e) => (e.target as HTMLButtonElement).style.color = '#2D3548'}
+                    onMouseLeave={(e) => (e.target as HTMLButtonElement).style.color = '#212842'}
                   >
                     {showPasswords[teacher.uid] ? 'Hide' : 'Show'}
                   </button>
                   {teacher.password && (
                     <button
                       onClick={() => copyPasswordToClipboard(teacher.password!)}
-                      className="text-green-600 hover:text-green-800 text-sm"
+                      className="text-sm transition-colors"
+                      style={{color: '#22c55e'}}
+                      onMouseEnter={(e) => (e.target as HTMLButtonElement).style.color = '#16a34a'}
+                      onMouseLeave={(e) => (e.target as HTMLButtonElement).style.color = '#22c55e'}
                       title="Copy password to clipboard"
                     >
                       Copy
@@ -187,8 +249,36 @@ export default function TeacherManager() {
                 </div>
               </div>
               <div className="space-x-4">
-                <button onClick={() => setEditingTeacher(teacher)} className="text-indigo-600 hover:underline">Edit</button>
-                <button onClick={() => handleDeleteTeacher(teacher.uid)} className="text-red-600 hover:underline">Delete</button>
+                <button 
+                  onClick={() => setEditingTeacher(teacher)} 
+                  className="transition-colors"
+                  style={{color: '#212842'}}
+                  onMouseEnter={(e) => {
+                    (e.target as HTMLButtonElement).style.color = '#2D3548';
+                    (e.target as HTMLButtonElement).style.textDecoration = 'underline';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as HTMLButtonElement).style.color = '#212842';
+                    (e.target as HTMLButtonElement).style.textDecoration = 'none';
+                  }}
+                >
+                  Edit
+                </button>
+                <button 
+                  onClick={() => handleDeleteTeacher(teacher.uid)} 
+                  className="transition-colors"
+                  style={{color: '#dc2626'}}
+                  onMouseEnter={(e) => {
+                    (e.target as HTMLButtonElement).style.color = '#b91c1c';
+                    (e.target as HTMLButtonElement).style.textDecoration = 'underline';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.target as HTMLButtonElement).style.color = '#dc2626';
+                    (e.target as HTMLButtonElement).style.textDecoration = 'none';
+                  }}
+                >
+                  Delete
+                </button>
               </div>
             </li>
           ))}
