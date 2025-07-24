@@ -39,9 +39,7 @@ export default function Sidebar() {
             </Link>
           );
         })}
-        <Link href="/admin/students" className={`block py-2.5 px-4 rounded transition duration-200 ${pathname === '/admin/students' ? 'bg-indigo-700' : 'hover:bg-indigo-700'}`}>
-          Manage Students
-        </Link>
+
         <Link href="/admin/timetables" className={`block py-2.5 px-4 rounded transition duration-200 ${pathname === '/admin/timetables' ? 'bg-indigo-700' : 'hover:bg-indigo-700'}`}>
           Timetables
         </Link>

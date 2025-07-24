@@ -6,9 +6,14 @@ import { db } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Timetable, Class, User, AttendanceRecord } from '@/types';
 
+interface SelectableClass extends Timetable {
+  className: string;
+  classCode: string;
+}
+
 export default function AttendanceTaker() {
   const { user } = useAuth();
-  const [todaysClasses, setTodaysClasses] = useState<Timetable[]>([]);
+  const [todaysClasses, setTodaysClasses] = useState<SelectableClass[]>([]);
   const [selectedClassId, setSelectedClassId] = useState<string>('');
   const [students, setStudents] = useState<User[]>([]);
   const [attendance, setAttendance] = useState<{ [studentId: string]: 'present' | 'absent' | 'late' }>({});
@@ -23,9 +28,30 @@ export default function AttendanceTaker() {
     if (!user) return;
     const fetchTodaysClasses = async () => {
       const q = query(collection(db, 'timetables'), where('teacherId', '==', user.uid), where('dayOfWeek', '==', today));
-      const querySnapshot = await getDocs(q);
-      const classes = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Timetable));
-      setTodaysClasses(classes);
+      const timetableSnapshot = await getDocs(q);
+      const timetables = timetableSnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Timetable));
+
+      if (timetables.length === 0) {
+        setTodaysClasses([]);
+        return;
+      }
+
+      const classIds = [...new Set(timetables.map(t => t.classId))];
+      const classesQuery = query(collection(db, 'classes'), where('__name__', 'in', classIds));
+      const classesSnapshot = await getDocs(classesQuery);
+      const classMap = new Map<string, { name: string; code: string }>();
+      classesSnapshot.docs.forEach(doc => {
+        const classData = doc.data() as Class;
+        classMap.set(doc.id, { name: classData.name, code: classData.code });
+      });
+
+      const enrichedClasses = timetables.map(t => ({
+        ...t,
+        className: classMap.get(t.classId)?.name || 'Unknown Class',
+        classCode: classMap.get(t.classId)?.code || 'N/A',
+      }));
+
+      setTodaysClasses(enrichedClasses);
     };
     fetchTodaysClasses();
   }, [user, today]);
@@ -108,7 +134,11 @@ export default function AttendanceTaker() {
         <label htmlFor="class-select" className="block text-sm font-medium text-gray-700 mb-2">Select a Class:</label>
         <select id="class-select" value={selectedClassId} onChange={e => setSelectedClassId(e.target.value)} className="w-full px-4 py-2 border rounded-md text-black" disabled={todaysClasses.length === 0}>
           <option value="">{todaysClasses.length > 0 ? 'Select a class' : 'No classes scheduled for today'}</option>
-          {todaysClasses.map(c => <option key={c.id} value={c.classId}>{c.classId}</option>)} {/* We need to fetch class name here */}
+          {todaysClasses.map(c => (
+            <option key={c.id} value={c.classId}>
+              {c.className} ({c.classCode})
+            </option>
+          ))}
         </select>
       </div>
 

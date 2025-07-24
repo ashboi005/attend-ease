@@ -5,10 +5,9 @@ import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 
 const navLinks = [
-  { name: 'Dashboard', href: '/teacher' },
-  { name: 'My Timetable', href: '/teacher/timetable' },
-  { name: 'Take Attendance', href: '/teacher/attendance' },
-  { name: 'Reports', href: '/teacher/reports' },
+  { name: 'Dashboard', href: '/student' },
+  { name: 'My Timetable', href: '/student/timetable' },
+  { name: 'My Attendance', href: '/student/attendance' },
 ];
 
 export default function Sidebar() {
@@ -18,7 +17,7 @@ export default function Sidebar() {
   return (
     <div className="w-64 bg-gray-800 text-white flex flex-col">
       <div className="p-6 text-2xl font-bold border-b border-gray-700">
-        <Link href="/teacher">Teacher Panel</Link>
+        <Link href="/student">Student Panel</Link>
       </div>
       <nav className="flex-1 p-4 space-y-2">
         {navLinks.map((link) => {

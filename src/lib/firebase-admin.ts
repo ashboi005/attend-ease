@@ -1,4 +1,5 @@
 import admin from 'firebase-admin';
+import { getFirestore } from 'firebase-admin/firestore';
 
 if (!admin.apps.length) {
   try {
@@ -14,4 +15,7 @@ if (!admin.apps.length) {
   }
 }
 
-export default admin;
+const adminDb = getFirestore();
+
+export { admin, adminDb };
+

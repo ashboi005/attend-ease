@@ -9,6 +9,7 @@ import { useRouter, usePathname } from 'next/navigation';
 interface AuthContextType {
   user: User | null;
   userProfile: UserProfile | null;
+  isAuthenticated: boolean;
   loading: boolean;
   logout: () => void;
 }
@@ -67,7 +68,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user, userProfile, loading, pathname, router]);
 
   return (
-    <AuthContext.Provider value={{ user, userProfile, loading, logout }}>
+    <AuthContext.Provider value={{
+      user,
+      userProfile,
+      isAuthenticated: !loading && !!user,
+      loading,
+      logout,
+    }}>
       {loading ? <div className="flex min-h-screen items-center justify-center">Loading...</div> : children}
     </AuthContext.Provider>
   );

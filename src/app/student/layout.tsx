@@ -1,10 +1,9 @@
-import Sidebar from '@/components/admin/Sidebar';
+import Sidebar from '@/components/student/Sidebar';
 import RoleGuard from '@/components/auth/RoleGuard';
-import { ReactNode } from 'react';
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function StudentLayout({ children }: { children: React.ReactNode }) {
   return (
-    <RoleGuard role="admin">
+    <RoleGuard role="student">
       <div className="flex h-screen bg-gray-100">
         <Sidebar />
         <main className="flex-1 p-8 overflow-y-auto">

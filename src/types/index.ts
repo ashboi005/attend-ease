@@ -5,11 +5,13 @@ export interface Class {
   studentIds?: string[];
 }
 
+export type UserRole = 'admin' | 'teacher' | 'student';
+
 export interface User {
   uid: string;
   email: string;
   displayName: string;
-  role: 'admin' | 'teacher' | 'student';
+  role: UserRole;
 }
 
 export interface Timetable {

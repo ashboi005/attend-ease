@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import admin from '@/lib/firebase-admin';
-import { db } from '@/lib/firebase'; // We need the client-side db for setting the document
-import { doc, setDoc } from 'firebase/firestore';
+import { admin, adminDb } from '@/lib/firebase-admin';
 
 export async function POST(request: Request) {
   try {
@@ -18,9 +16,9 @@ export async function POST(request: Request) {
       displayName,
     });
 
-    // Add user details to Firestore
-    const userDocRef = doc(db, 'users', userRecord.uid);
-    await setDoc(userDocRef, {
+    // Add user details to Firestore using the Admin SDK
+    const userDocRef = adminDb.collection('users').doc(userRecord.uid);
+    await userDocRef.set({
       email,
       displayName,
       role,
