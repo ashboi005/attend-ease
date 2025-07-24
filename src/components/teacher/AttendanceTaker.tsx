@@ -5,6 +5,7 @@ import { collection, query, where, getDocs, addDoc, doc, getDoc } from 'firebase
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Timetable, Class, User, AttendanceRecord } from '@/types';
+import AiAttendanceSummary from '@/components/ai/AiAttendanceSummary';
 
 interface SelectableClass extends Timetable {
   className: string;
@@ -140,6 +141,12 @@ export default function AttendanceTaker() {
             </option>
           ))}
         </select>
+
+        {selectedClassId && (
+          <div className="mt-4">
+            <AiAttendanceSummary classId={selectedClassId} />
+          </div>
+        )}
       </div>
 
       {loading && <p>Loading students...</p>}

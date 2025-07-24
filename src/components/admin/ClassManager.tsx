@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Class, User } from '@/types';
+import AiAttendanceSummary from '@/components/ai/AiAttendanceSummary';
 
 export default function ClassManager() {
   const [classes, setClasses] = useState<Class[]>([]);
@@ -144,10 +145,13 @@ export default function ClassManager() {
         <h2 className="text-2xl font-semibold mb-4">Existing Classes</h2>
         <ul className="space-y-4">
           {classes.map(c => (
-            <li key={c.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-md">
+                        <li key={c.id} className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 bg-gray-50 rounded-md space-y-4 md:space-y-0">
               <div>
                 <p className="text-gray-800 font-medium">{c.name} ({c.code})</p>
                 <p className="text-gray-500 text-sm">{c.studentIds?.length || 0} students enrolled</p>
+              </div>
+              <div className="p-8 max-width-60">
+                <AiAttendanceSummary classId={c.id} />
               </div>
               <div className="space-x-4">
                 <button onClick={() => setEditingClass(c)} className="text-indigo-600 hover:underline">Edit</button>
