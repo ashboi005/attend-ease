@@ -150,9 +150,6 @@ export default function ClassManager() {
                 <p className="text-gray-800 font-medium">{c.name} ({c.code})</p>
                 <p className="text-gray-500 text-sm">{c.studentIds?.length || 0} students enrolled</p>
               </div>
-              <div className="p-8 max-width-60">
-                <AiAttendanceSummary classId={c.id} />
-              </div>
               <div className="space-x-4">
                 <button onClick={() => setEditingClass(c)} className="text-indigo-600 hover:underline">Edit</button>
                 <button onClick={() => handleDeleteClass(c.id)} className="text-red-600 hover:underline">Delete</button>

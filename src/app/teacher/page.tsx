@@ -13,6 +13,7 @@ export default function TeacherDashboard() {
           <h2 className="text-2xl font-semibold text-gray-800">Welcome, {user?.displayName || 'Teacher'}!</h2>
           <p className="text-gray-600 mt-2">This is your central hub for managing your classes, schedules, and student attendance. Use the sidebar to navigate through the different sections.</p>
         </div>
+<<<<<<< HEAD
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           <div className="bg-white p-6 rounded-lg shadow-md">
@@ -31,6 +32,8 @@ export default function TeacherDashboard() {
             </ul>
           </div>
         </div>
+=======
+>>>>>>> a2bbe5421fc4790773c142639e65e17de1a96e14
       </div>
     </main>
   );

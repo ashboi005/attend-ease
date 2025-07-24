@@ -6,6 +6,7 @@ import { db } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Timetable, Class, User, AttendanceRecord, SelectableClass } from '@/types';
 
+
 export default function AttendanceTaker() {
   const { user } = useAuth();
   const [allClasses, setAllClasses] = useState<SelectableClass[]>([]);
