@@ -7,8 +7,9 @@ import { Class, User } from '@/types';
 
 export default function ClassManager() {
   const [classes, setClasses] = useState<Class[]>([]);
-  const [students, setStudents] = useState<User[]>([]);
-  const [newClass, setNewClass] = useState({ name: '', code: '' });
+    const [students, setStudents] = useState<User[]>([]);
+  const [teachers, setTeachers] = useState<User[]>([]);
+    const [newClass, setNewClass] = useState({ name: '', code: '', teacherId: '' });
   const [editingClass, setEditingClass] = useState<Class | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,19 +24,32 @@ export default function ClassManager() {
       const studentQuery = query(collection(db, 'users'), where('role', '==', 'student'));
       const studentSnapshot = await getDocs(studentQuery);
       setStudents(studentSnapshot.docs.map(doc => ({ ...doc.data(), uid: doc.id } as User)));
+
+      // Fetch teachers
+      const teacherQuery = query(collection(db, 'users'), where('role', '==', 'teacher'));
+      const teacherSnapshot = await getDocs(teacherQuery);
+      setTeachers(teacherSnapshot.docs.map(doc => ({ ...doc.data(), uid: doc.id } as User)));
       setLoading(false);
     };
 
     fetchData();
   }, []);
 
-  const handleAddClass = async (e: React.FormEvent) => {
+    const handleAddClass = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newClass.name.trim() || !newClass.code.trim()) return;
+    if (!newClass.name.trim() || !newClass.code.trim() || !newClass.teacherId) {
+      alert('Please fill all fields and select a teacher.');
+      return;
+    }
 
-    const docRef = await addDoc(collection(db, 'classes'), newClass);
-    setClasses([...classes, { ...newClass, id: docRef.id }]);
-    setNewClass({ name: '', code: '' });
+    try {
+            const docRef = await addDoc(collection(db, 'classes'), newClass);
+            setClasses([...classes, { ...newClass, id: docRef.id }]);
+            setNewClass({ name: '', code: '', teacherId: '' });
+    } catch (error) {
+      console.error('Error adding class: ', error);
+      alert('Failed to add class. Please check the console for more details.');
+    }
   };
 
   const handleUpdateClass = async (e: React.FormEvent) => {
@@ -53,12 +67,29 @@ export default function ClassManager() {
     setEditingClass(null);
   };
 
-  const handleStudentSelection = (studentId: string) => {
+      const handleStudentSelection = (studentId: string) => {
     if (!editingClass) return;
+
     const currentStudentIds = editingClass.studentIds || [];
-    const updatedStudentIds = currentStudentIds.includes(studentId)
-      ? currentStudentIds.filter(id => id !== studentId)
-      : [...currentStudentIds, studentId];
+    const isStudentInCurrentClass = currentStudentIds.includes(studentId);
+
+    // Check if the student is being added to this class (not removed)
+    if (!isStudentInCurrentClass) {
+      // Check if the student is already in any other class
+      const studentInAnotherClass = classes.some(c => 
+        c.id !== editingClass.id && c.studentIds?.includes(studentId)
+      );
+
+      if (studentInAnotherClass) {
+        alert('This student is already assigned to another class.');
+        return; // Prevent adding the student
+      }
+    }
+
+    const updatedStudentIds = isStudentInCurrentClass
+      ? currentStudentIds.filter(id => id !== studentId) // Remove student
+      : [...currentStudentIds, studentId]; // Add student
+
     setEditingClass({ ...editingClass, studentIds: updatedStudentIds });
   };
 
@@ -77,7 +108,15 @@ export default function ClassManager() {
         <form onSubmit={editingClass ? handleUpdateClass : handleAddClass}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <input type="text" value={editingClass ? editingClass.name : newClass.name} onChange={(e) => editingClass ? setEditingClass({ ...editingClass, name: e.target.value }) : setNewClass({ ...newClass, name: e.target.value })} placeholder="Class Name (e.g., Computer Science)" className="w-full px-4 py-2 border rounded-md text-black" required />
-            <input type="text" value={editingClass ? editingClass.code : newClass.code} onChange={(e) => editingClass ? setEditingClass({ ...editingClass, code: e.target.value }) : setNewClass({ ...newClass, code: e.target.value })} placeholder="Class Code (e.g., CS101)" className="w-full px-4 py-2 border rounded-md text-black" required />
+                        <input type="text" value={editingClass ? editingClass.code : newClass.code} onChange={(e) => editingClass ? setEditingClass({ ...editingClass, code: e.target.value }) : setNewClass({ ...newClass, code: e.target.value })} placeholder="Class Code (e.g., CS101)" className="w-full px-4 py-2 border rounded-md text-black" required />
+            {!editingClass && (
+              <select value={newClass.teacherId} onChange={(e) => setNewClass({ ...newClass, teacherId: e.target.value })} className="w-full px-4 py-2 border rounded-md text-black" required>
+                <option value="">Select Teacher</option>
+                {teachers.map(teacher => (
+                  <option key={teacher.uid} value={teacher.uid}>{teacher.displayName}</option>
+                ))}
+              </select>
+            )}
           </div>
 
           {editingClass && (
