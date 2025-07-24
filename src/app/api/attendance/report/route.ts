@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase'; // Using client SDK for simplicity, but admin would be better for production
+import { adminDb } from '@/lib/firebase-admin';
 import { AttendanceRecord } from '@/types';
 
 // A simple simulation of an AI analysis function
@@ -43,7 +42,8 @@ function generateAttendanceInsights(records: AttendanceRecord[]) {
     .sort((a, b) => a.percentage - b.percentage);
 
   const insights = [
-    `Overall class attendance is ${overallPercentage}%.`,
+    `Overall class attendance is ${overallPercentage}%.
+`,
     `${lowAttendanceStudents.length} student(s) have an attendance rate below 75%.`,
     'Consistent attendance is key to success. Consider reaching out to students with low attendance.',
   ];
@@ -59,9 +59,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Class ID is required' }, { status: 400 });
     }
 
-    const attendanceQuery = query(collection(db, 'attendance'), where('classId', '==', classId));
-    const querySnapshot = await getDocs(attendanceQuery);
-    const records = querySnapshot.docs.map(doc => doc.data() as AttendanceRecord);
+    // Use Admin SDK to fetch attendance records
+    const attendanceSnapshot = await adminDb.collection('attendance').where('classId', '==', classId).get();
+    const records = attendanceSnapshot.docs.map(doc => doc.data() as AttendanceRecord);
 
     const report = generateAttendanceInsights(records);
 

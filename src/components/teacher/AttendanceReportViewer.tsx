@@ -96,9 +96,17 @@ export default function AttendanceReportViewer() {
             {report.lowAttendanceStudents.length > 0 ? (
               <ul className="space-y-2">
                 {report.lowAttendanceStudents.map(student => (
-                  <li key={student.studentId} className="flex justify-between p-2 bg-red-50 rounded-md">
-                    <span className="text-red-800">Student ID: {student.studentId}</span>
-                    <span className="font-bold text-red-600">{student.percentage}%</span>
+                  <li
+                    key={student.studentId}
+                    className="flex justify-between items-center p-2 bg-red-50 rounded-md border border-red-400 shadow-sm"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-red-600 font-bold">⚠️</span>
+                      <span className="text-red-800">Student ID: {student.studentId}</span>
+                    </div>
+                    <span className="font-bold text-red-600">{student.percentage}%
+                      <span className="ml-2 text-xs text-red-500">Low Attendance</span>
+                    </span>
                   </li>
                 ))}
               </ul>
