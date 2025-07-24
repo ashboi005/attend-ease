@@ -51,8 +51,9 @@ export default function LoginForm() {
     }
   };
 
-  return (
-    <form onSubmit={handleLogin} className="space-y-6">
+    return (
+    <>
+      <form onSubmit={handleLogin} className="space-y-6">
       <div>
         <label
           htmlFor="email"
@@ -146,5 +147,15 @@ export default function LoginForm() {
         </button>
       </div>
     </form>
+    <div className="mt-6 text-center text-sm" style={{color: '#2D3548'}}>
+        <p className="font-bold" style={{color: '#212842'}}>For GDG Reviewers:</p>
+        <p>Use the following credentials to access the admin panel:</p>
+        <ul className="list-none p-0 mt-2 space-y-1">
+          <li><strong>Admin Email:</strong> admin@gndu.in</li>
+          <li><strong>Admin Password:</strong> admingndu</li>
+        </ul>
+        <p className="mt-2">Teacher and Student credentials can be created and viewed inside the admin panel after logging in.</p>
+      </div>
+    </>
   );
 }

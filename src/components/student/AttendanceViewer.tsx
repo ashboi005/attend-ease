@@ -5,6 +5,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Class, AttendanceRecord } from '@/types';
+import AttendanceChart from './AttendanceChart';
 
 interface StudentAttendanceData {
   classInfo: Class;
@@ -102,6 +103,11 @@ export default function AttendanceViewer() {
             <div className="p-4 bg-green-100 rounded-lg"><span className="font-bold text-green-800">{data.summary.present}</span> Present</div>
             <div className="p-4 bg-yellow-100 rounded-lg"><span className="font-bold text-yellow-800">{data.summary.late}</span> Late</div>
             <div className="p-4 bg-red-100 rounded-lg"><span className="font-bold text-red-800">{data.summary.absent}</span> Absent</div>
+          </div>
+
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold mb-3 text-gray-700">Attendance Chart</h3>
+            <AttendanceChart data={data.summary} />
           </div>
 
           <h3 className="text-xl font-semibold mb-3 text-gray-700">Detailed Log</h3>

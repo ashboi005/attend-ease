@@ -2,7 +2,11 @@ export interface Class {
   id: string;
   name: string;
   code: string;
+<<<<<<< HEAD
   subject?: string;
+=======
+  teacherId: string;
+>>>>>>> c015477e4bc8212bb3529ed3684eded2e9871ed7
   studentIds?: string[];
 }
 
