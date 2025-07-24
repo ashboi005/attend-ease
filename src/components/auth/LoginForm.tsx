@@ -43,7 +43,7 @@ export default function LoginForm() {
         setError('Could not determine user role.');
         auth.signOut(); // Sign out the user if role is not found
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to log in. Please check your credentials.');
       console.error(err);
     } finally {

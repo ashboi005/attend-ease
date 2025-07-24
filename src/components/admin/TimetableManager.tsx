@@ -75,7 +75,7 @@ export default function TimetableManager() {
             <option value="">Select Teacher</option>
             {teachers.map(t => <option key={t.uid} value={t.uid}>{t.displayName}</option>)}
           </select>
-          <select value={editingTimetable?.dayOfWeek || newTimetable.dayOfWeek} onChange={e => editingTimetable ? setEditingTimetable({...editingTimetable, dayOfWeek: e.target.value as any}) : setNewTimetable({ ...newTimetable, dayOfWeek: e.target.value as any })} className="w-full px-4 py-2 border rounded-md text-black" required>
+          <select value={editingTimetable?.dayOfWeek || newTimetable.dayOfWeek} onChange={e => editingTimetable ? setEditingTimetable({...editingTimetable, dayOfWeek: e.target.value as 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday'}) : setNewTimetable({ ...newTimetable, dayOfWeek: e.target.value as 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday' })} className="w-full px-4 py-2 border rounded-md text-black" required>
             {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => <option key={day} value={day}>{day}</option>)}
           </select>
           <input type="time" value={editingTimetable?.startTime || newTimetable.startTime} onChange={e => editingTimetable ? setEditingTimetable({...editingTimetable, startTime: e.target.value}) : setNewTimetable({ ...newTimetable, startTime: e.target.value })} className="w-full px-4 py-2 border rounded-md text-black" required />

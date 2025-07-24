@@ -47,8 +47,9 @@ export default function StudentManager() {
 
       setStudents([...students, data.user]);
       setNewStudent({ displayName: '', email: '', password: '' });
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(errorMessage);
     }
   };
 
@@ -80,8 +81,9 @@ export default function StudentManager() {
       }
 
       setStudents(students.filter(s => s.uid !== uid));
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(errorMessage);
     }
   };
 

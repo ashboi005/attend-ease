@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { collection, query, where, getDocs, addDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
@@ -30,7 +30,7 @@ export default function AttendanceTaker() {
   };
 
   // Generate available dates for a class based on its timetable
-  const generateAvailableDates = (classId: string): string[] => {
+  const generateAvailableDates = useCallback((classId: string): string[] => {
     const dates: string[] = [];
     const today = new Date();
     const classSchedules = timetables.filter(t => t.classId === classId);
@@ -49,7 +49,7 @@ export default function AttendanceTaker() {
     for (let i = 0; i < 30; i++) {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
-      const dayOfWeek = getDayOfWeek(date.toISOString().split('T')[0]) as any;
+      const dayOfWeek = getDayOfWeek(date.toISOString().split('T')[0]) as 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
       
       const hasRecurringClass = classSchedules.some(schedule => 
         !schedule.date && schedule.dayOfWeek === dayOfWeek
@@ -62,7 +62,7 @@ export default function AttendanceTaker() {
 
     // Remove duplicates and sort
     return [...new Set(dates)].sort();
-  };
+  }, [timetables]);
 
   // Fetch all classes and timetables for the teacher
   useEffect(() => {
@@ -119,7 +119,7 @@ export default function AttendanceTaker() {
     const dates = generateAvailableDates(selectedClassId);
     setAvailableDates(dates);
     setSelectedDate('');
-  }, [selectedClassId, timetables]);
+  }, [selectedClassId, timetables, generateAvailableDates]);
 
   // Update available time slots when date changes
   useEffect(() => {
@@ -303,7 +303,7 @@ export default function AttendanceTaker() {
                           name={`attendance-${student.uid}`} 
                           value={status} 
                           checked={attendance[student.uid] === status} 
-                          onChange={() => handleStatusChange(student.uid, status as any)} 
+                          onChange={() => handleStatusChange(student.uid, status as 'present' | 'absent' | 'late')} 
                           className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300" 
                           disabled={isSubmitted} 
                         />

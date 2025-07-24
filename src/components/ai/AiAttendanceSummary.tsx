@@ -32,8 +32,9 @@ export default function AiAttendanceSummary({ classId }: AiAttendanceSummaryProp
 
       const data = await response.json();
       setSummary(data.summary);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

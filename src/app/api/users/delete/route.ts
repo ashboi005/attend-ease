@@ -15,8 +15,9 @@ export async function POST(request: Request) {
     // Delete user from Firebase Auth (handle if user does not exist)
     try {
       await admin.auth().deleteUser(uid);
-    } catch (err: any) {
-      if (err.code !== 'auth/user-not-found') {
+    } catch (err: unknown) {
+      const errorCode = err && typeof err === 'object' && 'code' in err ? (err as { code: string }).code : '';
+      if (errorCode !== 'auth/user-not-found') {
         throw err;
       }
       // else: user already deleted, continue
@@ -27,8 +28,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true }, { status: 200 });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error deleting user:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+    return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
   }
 }

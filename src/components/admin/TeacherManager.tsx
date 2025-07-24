@@ -47,8 +47,9 @@ export default function TeacherManager() {
 
       setTeachers([...teachers, data.user]);
       setNewTeacher({ displayName: '', email: '', password: '' });
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(errorMessage);
     }
   };
 
@@ -80,8 +81,9 @@ export default function TeacherManager() {
       }
 
       setTeachers(teachers.filter(t => t.uid !== uid));
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(errorMessage);
     }
   };
 

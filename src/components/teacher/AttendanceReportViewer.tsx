@@ -1,15 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
 import { Class } from '@/types';
 
+interface AttendanceData {
+  date: string;
+  status: 'present' | 'absent' | 'late';
+  studentName: string;
+}
+
 interface Report {
-  overallPercentage: number;
-  lowAttendanceStudents: { studentId: string; percentage: number }[];
-  insights: string[];
+  class: Class;
+  totalSessions: number;
+  attendanceData: AttendanceData[];
+  averageAttendance: number;
+  lowAttendanceStudents: { studentName: string; attendanceRate: number }[];
 }
 
 export default function AttendanceReportViewer() {
@@ -23,20 +31,13 @@ export default function AttendanceReportViewer() {
   // Fetch teacher's classes
   useEffect(() => {
     if (!user) return;
-    const fetchClasses = async () => {
-      const q = query(collection(db, 'classes'), where('teacherId', '==', user.uid)); // This assumes a teacherId field on Class
+    const fetchAllClasses = async () => {
+      // For now, fetch all classes (you might want to filter by teacher)
+      const q = query(collection(db, 'classes'));
       const querySnapshot = await getDocs(q);
-      // A real implementation would fetch classes via timetables
       const classData = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Class));
       setClasses(classData);
     };
-    // Simplified: In a real app, you'd get classes from the teacher's timetable.
-    const fetchAllClasses = async () => {
-        const q = query(collection(db, 'classes'));
-        const querySnapshot = await getDocs(q);
-        const classData = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id } as Class));
-        setClasses(classData);
-    }
     fetchAllClasses();
   }, [user]);
 
@@ -59,8 +60,9 @@ export default function AttendanceReportViewer() {
 
       const data = await response.json();
       setReport(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -73,39 +75,35 @@ export default function AttendanceReportViewer() {
           <option value="">Select a class</option>
           {classes.map(c => <option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
         </select>
-        <button onClick={handleGenerateReport} disabled={!selectedClassId || loading} className="w-full md:w-auto px-6 py-2 bg-indigo-600 text-white rounded-md disabled:bg-gray-400">
+        <button onClick={handleGenerateReport} disabled={!selectedClassId || loading} className="px-6 py-2 bg-indigo-600 text-white rounded-md disabled:bg-gray-400">
           {loading ? 'Generating...' : 'Generate Report'}
         </button>
       </div>
 
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded">{error}</div>}
 
       {report && (
-        <div className="space-y-6 pt-4 border-t">
-          <h2 className="text-2xl font-semibold">Attendance Report for {classes.find(c => c.id === selectedClassId)?.name}</h2>
-          
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <h3 className="font-bold text-blue-800 mb-2">AI-Powered Insights:</h3>
-            <ul className="list-disc list-inside space-y-1 text-blue-700">
-              {report.insights.map((insight, index) => <li key={index}>{insight}</li>)}
-            </ul>
+        <div className="space-y-6">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">Class Overview</h3>
+            <p className="text-gray-600">Class: {report.class.name} ({report.class.code})</p>
+            <p className="text-gray-600">Total Sessions: {report.totalSessions}</p>
+            <p className="text-gray-600">Average Attendance: {report.averageAttendance.toFixed(1)}%</p>
           </div>
 
-          <div>
-            <h3 className="text-xl font-semibold mb-3">Students with Low Attendance (&lt;75%)</h3>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Low Attendance Students</h3>
             {report.lowAttendanceStudents.length > 0 ? (
               <ul className="space-y-2">
-                {report.lowAttendanceStudents.map(student => (
-                  <li
-                    key={student.studentId}
-                    className="flex justify-between items-center p-2 bg-red-50 rounded-md border border-red-400 shadow-sm"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-red-600 font-bold">⚠️</span>
-                      <span className="text-red-800">Student ID: {student.studentId}</span>
-                    </div>
-                    <span className="font-bold text-red-600">{student.percentage}%
-                      <span className="ml-2 text-xs text-red-500">Low Attendance</span>
+                {report.lowAttendanceStudents.map((student, index) => (
+                  <li key={index} className="flex justify-between items-center p-2 bg-white rounded border">
+                    <span className="text-gray-800">{student.studentName}</span>
+                    <span className={`px-2 py-1 rounded text-sm ${
+                      student.attendanceRate < 50 ? 'bg-red-100 text-red-800' : 
+                      student.attendanceRate < 75 ? 'bg-yellow-100 text-yellow-800' : 
+                      'bg-green-100 text-green-800'
+                    }`}>
+                      {student.attendanceRate.toFixed(1)}%
                     </span>
                   </li>
                 ))}

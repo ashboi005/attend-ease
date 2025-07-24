@@ -37,8 +37,9 @@ export default function CreateUserForm() {
       setDisplayName('');
       setRole('student');
 
-    } catch (err: any) {
-      setError(err.message);
+      } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
