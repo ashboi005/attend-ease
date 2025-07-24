@@ -125,7 +125,7 @@ export default function ClassManager() {
               <div className="max-h-60 overflow-y-auto border rounded-md p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                 {students.map(student => (
                   <label key={student.uid} className="flex items-center space-x-2 text-black">
-                    <input type="checkbox" checked={editingClass.studentIds?.includes(student.uid)} onChange={() => handleStudentSelection(student.uid)} className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                    <input type="checkbox" checked={!!editingClass?.studentIds?.includes(student.uid)} onChange={() => handleStudentSelection(student.uid)} className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
                     <span>{student.displayName}</span>
                   </label>
                 ))}
