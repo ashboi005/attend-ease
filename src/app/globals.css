@@ -1,41 +1,69 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary-dark: #212842;    /* Main dark color */
+  --primary-light: #F0E7D5;   /* Main light color */
+  --primary-accent: #2D3548;  /* Slightly lighter dark for hover states */
+  --primary-soft: #E8DCC6;    /* Slightly darker light for subtle backgrounds */
+  --text-dark: #212842;       /* Dark text on light backgrounds */
+  --text-light: #F0E7D5;      /* Light text on dark backgrounds */
+  --background: #F0E7D5;
+  --foreground: #212842;
+  --font-crimson: 'Crimson Text', serif;
 }
 
 @theme inline {
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+  --color-primary-accent: var(--primary-accent);
+  --color-primary-soft: var(--primary-soft);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-crimson);
+  --font-mono: var(--font-crimson);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-crimson), serif;
+  font-weight: 400;
+  line-height: 1.6;
 }
 
-/* Main content text color */
-main, .page-content, .content, .bg-white, .rounded-lg, .shadow-md, .p-8, .p-6, .mb-6, .max-w-4xl, .max-w-md, .space-y-8, .space-y-6, .grid, .flex-1, .overflow-y-auto, .min-h-screen, .justify-center, .items-center, .text-center, .text-left, .block, .w-full {
-  color: #000 !important;
+/* Apply Crimson Text font to all text elements */
+* {
+  font-family: var(--font-crimson), serif;
 }
 
-/* Sidebar text color - force white for sidebar containers */
-.bg-gray-800.text-white, aside.bg-gray-800, aside.text-white, .sidebar, aside {
-  color: #fff !important;
+/* Specific font weights for different elements */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-crimson), serif;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
-/* Force all text inside sidebar containers to be white */
-.bg-gray-800.text-white, .bg-gray-800.text-white * {
-  color: #fff !important;
+p, span, div, label, input, button, a {
+  font-family: var(--font-crimson), serif;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Button text should be slightly bolder for readability */
+button {
+  font-weight: 600;
+}
+
+/* Input text should be clean and readable */
+input, textarea, select {
+  font-weight: 400;
+}
+
+/* Emphasis and strong text */
+strong, b {
+  font-weight: 700;
+}
+
+em, i {
+  font-style: italic;
 }
