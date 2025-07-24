@@ -13,6 +13,7 @@ export default function TeacherManager() {
   const [editingTeacher, setEditingTeacher] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showPasswords, setShowPasswords] = useState<{[key: string]: boolean}>({});
 
   useEffect(() => {
     const fetchTeachers = async () => {
@@ -84,10 +85,44 @@ export default function TeacherManager() {
     }
   };
 
+  const togglePasswordVisibility = (uid: string) => {
+    setShowPasswords(prev => ({
+      ...prev,
+      [uid]: !prev[uid]
+    }));
+  };
+
+  const copyPasswordToClipboard = async (password: string) => {
+    try {
+      await navigator.clipboard.writeText(password);
+      // You could add a toast notification here
+      alert('Password copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy password:', err);
+      alert('Failed to copy password to clipboard');
+    }
+  };
+
   if (loading) return <p>Loading teachers...</p>;
 
   return (
     <div className="space-y-8">
+      {/* Security Warning */}
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className="flex items-start">
+          <div className="flex-shrink-0">
+            <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <div className="ml-3">
+            <h3 className="text-sm font-medium text-yellow-800">Security Notice</h3>
+            <p className="text-sm text-yellow-700 mt-1">
+              Passwords are displayed here for administrative purposes only. Ensure this information is kept secure and accessed only by authorized personnel.
+            </p>
+          </div>
+        </div>
+      </div>
       {/* Add/Edit Form */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold mb-4">{editingTeacher ? 'Edit Teacher' : 'Add New Teacher'}</h2>
@@ -123,9 +158,33 @@ export default function TeacherManager() {
         <ul className="space-y-4">
           {teachers.map(teacher => (
             <li key={teacher.uid} className="flex items-center justify-between p-4 bg-gray-50 rounded-md">
-              <div>
+              <div className="flex-1">
                 <p className="text-gray-800 font-medium">{teacher.displayName}</p>
                 <p className="text-gray-500 text-sm">{teacher.email}</p>
+                <div className="flex items-center mt-2">
+                  <span className="text-gray-600 text-sm mr-2">Password:</span>
+                  <span className="text-gray-800 text-sm font-mono bg-gray-200 px-2 py-1 rounded mr-2">
+                    {showPasswords[teacher.uid] 
+                      ? (teacher.password || 'Not available')
+                      : '••••••••'
+                    }
+                  </span>
+                  <button
+                    onClick={() => togglePasswordVisibility(teacher.uid)}
+                    className="text-indigo-600 hover:text-indigo-800 text-sm mr-2"
+                  >
+                    {showPasswords[teacher.uid] ? 'Hide' : 'Show'}
+                  </button>
+                  {teacher.password && (
+                    <button
+                      onClick={() => copyPasswordToClipboard(teacher.password!)}
+                      className="text-green-600 hover:text-green-800 text-sm"
+                      title="Copy password to clipboard"
+                    >
+                      Copy
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="space-x-4">
                 <button onClick={() => setEditingTeacher(teacher)} className="text-indigo-600 hover:underline">Edit</button>
