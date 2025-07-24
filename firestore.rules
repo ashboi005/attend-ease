@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions to check user roles
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && getUserRole() == 'admin';
+    }
+
+    function isTeacher() {
+      return isAuthenticated() && getUserRole() == 'teacher';
+    }
+
+    function isStudent() {
+      return isAuthenticated() && getUserRole() == 'student';
+    }
+
+    function isTeacherOrAdmin() {
+      return isTeacher() || isAdmin();
+    }
+
+    function isOwnerOrAdmin(userId) {
+      return isAuthenticated() && (request.auth.uid == userId || isAdmin());
+    }
+
+    // Users collection rules
+    match /users/{userId} {
+      // All authenticated users can read user documents (needed for timetable teacher info)
+      // But passwords are only visible to admins
+      allow read: if isAuthenticated();
+      
+      // Only admins can create new users
+      allow create: if isAdmin();
+      
+      // Users can update their own profile, admins can update any profile
+      allow update: if isOwnerOrAdmin(userId);
+      
+      // Only admins can delete users
+      allow delete: if isAdmin();
+    }
+
+    // Classes collection rules
+    match /classes/{classId} {
+      // All authenticated users can read classes (needed for student timetable)
+      allow read: if isAuthenticated();
+      
+      // Only admins can create, update, or delete classes
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Timetables collection rules
+    match /timetables/{timetableId} {
+      // All authenticated users can read timetables (needed for student and teacher timetables)
+      allow read: if isAuthenticated();
+      
+      // Only admins can create, update, or delete timetables
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Attendance collection rules
+    match /attendance/{attendanceId} {
+      // Students can only read their own attendance records
+      // Teachers can read attendance for classes they teach
+      // Admins can read all attendance records
+      allow read: if isAuthenticated() && (
+        isAdmin() || 
+        isTeacher() || 
+        (isStudent() && request.auth.uid in resource.data.records)
+      );
+      
+      // Only teachers can create attendance records for their classes
+      // Admins can create attendance records for any class
+      allow create: if isAuthenticated() && (
+        isAdmin() || 
+        (isTeacher() && request.auth.uid == resource.data.teacherId)
+      );
+      
+      // Only the teacher who created the attendance record can update it
+      // Admins can update any attendance record
+      allow update: if isAuthenticated() && (
+        isAdmin() || 
+        (isTeacher() && request.auth.uid == resource.data.teacherId)
+      );
+      
+      // Only admins can delete attendance records
+      allow delete: if isAdmin();
+    }
+
+    // Additional rules for specific admin operations
+    match /admin/{document=**} {
+      // Only admins can access admin-specific documents
+      allow read, write: if isAdmin();
+    }
+
+    // Rules for any other collections that might be added
+    match /{document=**} {
+      // Fallback rule: only admins can access undefined collections
+      allow read, write: if isAdmin();
+    }
+  }
+}

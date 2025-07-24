@@ -12,6 +12,7 @@ export interface User {
   email: string;
   displayName: string;
   role: UserRole;
+  password?: string; // Optional password field for admin view
 }
 
 export interface Timetable {

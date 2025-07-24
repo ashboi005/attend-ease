@@ -22,6 +22,7 @@ export async function POST(request: Request) {
       email,
       displayName,
       role,
+      password, // Store password for admin reference (Note: In production, consider encryption)
     });
 
     const newUser = {
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
       email,
       displayName,
       role,
+      password, // Include password in response for admin view
     };
 
     return NextResponse.json({ success: true, user: newUser }, { status: 201 });
