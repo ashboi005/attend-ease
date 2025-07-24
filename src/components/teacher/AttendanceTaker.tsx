@@ -4,17 +4,7 @@ import { useState, useEffect } from 'react';
 import { collection, query, where, getDocs, addDoc, doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/context/AuthContext';
-<<<<<<< HEAD
 import { Timetable, Class, User, AttendanceRecord, SelectableClass } from '@/types';
-=======
-import { Timetable, Class, User, AttendanceRecord } from '@/types';
-import AiAttendanceSummary from '@/components/ai/AiAttendanceSummary';
-
-interface SelectableClass extends Timetable {
-  className: string;
-  classCode: string;
-}
->>>>>>> c015477e4bc8212bb3529ed3684eded2e9871ed7
 
 export default function AttendanceTaker() {
   const { user } = useAuth();
@@ -258,12 +248,6 @@ export default function AttendanceTaker() {
             <option key={c.id} value={c.id}>{c.name}{c.subject ? ` - ${c.subject}` : ''}</option>
           ))}
         </select>
-
-        {selectedClassId && (
-          <div className="mt-4">
-            <AiAttendanceSummary classId={selectedClassId} />
-          </div>
-        )}
       </div>
 
       {/* Date Selection */}
