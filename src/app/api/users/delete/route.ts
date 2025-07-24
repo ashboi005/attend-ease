@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import admin from '@/lib/firebase-admin';
-import { db } from '@/lib/firebase';
-import { doc, deleteDoc } from 'firebase/firestore';
+import { admin, adminDb } from '@/lib/firebase-admin';
+// Removed client SDK import
+// import { db } from '@/lib/firebase';
+// import { doc, deleteDoc } from 'firebase/firestore';
 
 export async function POST(request: Request) {
   try {
@@ -11,12 +12,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'User ID is required' }, { status: 400 });
     }
 
-    // Delete user from Firebase Auth
-    await admin.auth().deleteUser(uid);
+    // Delete user from Firebase Auth (handle if user does not exist)
+    try {
+      await admin.auth().deleteUser(uid);
+    } catch (err: any) {
+      if (err.code !== 'auth/user-not-found') {
+        throw err;
+      }
+      // else: user already deleted, continue
+    }
 
-    // Delete user document from Firestore
-    const userDocRef = doc(db, 'users', uid);
-    await deleteDoc(userDocRef);
+    // Delete user document from Firestore using Admin SDK
+    await adminDb.collection('users').doc(uid).delete();
 
     return NextResponse.json({ success: true }, { status: 200 });
 

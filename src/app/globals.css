@@ -24,3 +24,18 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Main content text color */
+main, .page-content, .content, .bg-white, .rounded-lg, .shadow-md, .p-8, .p-6, .mb-6, .max-w-4xl, .max-w-md, .space-y-8, .space-y-6, .grid, .flex-1, .overflow-y-auto, .min-h-screen, .justify-center, .items-center, .text-center, .text-left, .block, .w-full {
+  color: #000 !important;
+}
+
+/* Sidebar text color - force white for sidebar containers */
+.bg-gray-800.text-white, aside.bg-gray-800, aside.text-white, .sidebar, aside {
+  color: #fff !important;
+}
+
+/* Force all text inside sidebar containers to be white */
+.bg-gray-800.text-white, .bg-gray-800.text-white * {
+  color: #fff !important;
+}
