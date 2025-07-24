@@ -2,7 +2,15 @@ export interface Class {
   id: string;
   name: string;
   code: string;
+  subject?: string;
   studentIds?: string[];
+}
+
+export interface SelectableClass {
+  id: string;
+  name: string;
+  subject?: string;
+  date?: string;
 }
 
 export type UserRole = 'admin' | 'teacher' | 'student';
@@ -22,6 +30,7 @@ export interface Timetable {
   dayOfWeek: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
   startTime: string; // e.g., '09:00'
   endTime: string;   // e.g., '10:30'
+  date?: string; // Optional specific date (YYYY-MM-DD) for one-time classes
 }
 
 export interface AttendanceRecord {
